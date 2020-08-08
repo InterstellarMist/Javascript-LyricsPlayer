@@ -1,0 +1,115 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  user-select: none;
+}
+
+body {
+    background: #303030;
+    color: white;
+    font-family: 'Montserrat', sans-serif;
+    font-style: normal;
+}
+
+h1 {
+    padding: 0%;
+    margin: 0%;
+    position: absolute;
+    width: 265px;
+    height: 50px;
+    left: 67px;
+    top: 130px;
+
+    font-family: Montserrat;
+    font-style: normal;
+    font-weight: 800;
+    font-size: 41px;
+    line-height: 50px;
+}
+
+#subtext {
+    padding: 0%;
+    margin: 0;   
+    position: absolute;
+    width: 71px;
+    height: 15px;
+    left: 219px;
+    top: 184px;
+
+    font-family: Montserrat;
+    font-style: normal;
+    font-weight: lighter;
+    font-size: 12px;
+    line-height: 15px;
+}
+
+#spotify-logo {
+    position: absolute;
+    width: 60px;
+    height: 19px;
+    left: 296px;
+    top: 182px;
+}
+
+#illustration {
+    position: absolute;
+    width: 322px;
+    height: 237px;
+    left: 39px;
+    top: 282px;
+}
+
+#action-text {
+    position: absolute;
+    width: 184px;
+    height: 24px;
+    left: 108px;
+    top: 530px;
+
+    font-family: Montserrat;
+    font-style: normal;
+    font-weight: 300;
+    font-size: 20px;
+    line-height: 24px;
+}
+
+#action-button {
+    position: absolute;
+    width: 264px;
+    height: 50px;
+    left: 68px;
+    top: 590px;
+
+    /* Green 2 */
+
+    background: #27AE60;
+    border: 2px solid #27AE60;
+    box-sizing: border-box;
+    /* Neumorphic bulge */
+
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5), -5px -5px 10px rgba(255, 255, 255, 0.06), inset -5px -5px 10px rgba(0, 0, 0, 0.5), inset 5px 5px 10px rgba(255, 255, 255, 0.3);
+    border-radius: 25px;
+}
+
+#action-button:hover, #action-label{
+    cursor: pointer;
+}
+
+#action-button:active{
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5), -5px -5px 10px rgba(255, 255, 255, 0.06), inset 5px 5px 10px rgba(0, 0, 0, 0.5), inset -5px -5px 10px rgba(255, 255, 255, 0.3);
+}
+
+#action-label {
+    position: relative;
+    justify-content: center;
+    display: flex;
+    top: 12px;
+    
+    font-family: Montserrat;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 24px;
+    text-align: center;
+}

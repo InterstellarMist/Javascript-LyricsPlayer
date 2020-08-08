@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Player</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="player-style.css">
+</head>
+<body>
+    <div class="main-player">
+        <img id="menu-btn" src="assets/Menu button.svg" alt="menu-btn">
+        <img id="profile-picture" src="assets/temp/profile_picture.png" alt="profile-picture">
+        <img id="cover" src="assets/temp/cover.jpeg" alt="cover-art">
+        <div class="duration-bar">
+            <img id="empty-duration-bar" src="assets/empty duration bar.svg" alt="empty-duration-bar">
+            <div id="filled-duration-bar"></div>
+            <img id="scrubber" src="assets/scrubber.svg" alt="scrubber">
+        </div>
+        <div class="song-data">
+            <div id="title">Secret Story of the Swan</div>
+            <div id="artist">IZ*ONE</div>
+        </div>
+        <img id="pause-btn" src="assets/Pause Button.svg" alt="pause-btn">
+        <div id="prev-btn"></div>
+        <div id="next-btn"></div>
+        <div id="translate-btn"></div>
+    </div>
+    <div class="translation-card">
+        <div class="pull-down" id="translation-pull-down"></div>
+        <div class="language-btn" id="not-available">No tranlation available</div>
+        <div class="language-btn" id="korean">Korean <img src="assets/Korea.svg" alt="Korean"></div>    
+        <div class="language-btn" id="romanized">Romanized <img src="assets/United_nations.svg" alt="Romanized"></div>    
+        <div class="language-btn" id="english">English <img src="assets/America.svg" alt="English"></div>    
+        <div class="language-btn" id="japanese">Japanese <img src="assets/Japan.svg" alt="japanese"></div>
+        <div class="language-btn" id="chinese">Chinese <img src="assets/China.svg" alt="Chinese"></div>
+    </div>
+    <div class="lyrics-card">
+        <div class="pull-down" id="lyrics-pull-down"></div>
+        <div class="head"></div>
+        <div class="lyrics-container">
+            <div id="lyrics">
+                    Swan 우아하게
+                <br>Like Swan Swan Swan
+                <br>Like Swan Swan Swan (MAMA)
+                <br>
+                <br>들어볼래 동화 속에 나올 법한 얘기
+                <br>우리 둘이 둘이 둘이
+                <br>만든 비밀 비밀 비밀
+                <br>
+                <br>담아둘래 두 눈 속에 너로 가득해진
+                <br>작은 세계 세계 세계
+                <br>그 문이 열리게
+                <br>
+                <br>날 향한 눈빛에 나 나
+                <br>점점 더 빠져 들어가
+                <br>너의 손끝에서 시작되는 걸 Fairy tale
+                <br>
+                <br>상상했던 모든 순간들이
+                <br>눈앞에 다가올 그때까지
+                <br>너를 위한 춤을 춰
+                <br>우아하게
+                <br>
+                <br>Like Swan Swan Swan
+                <br>너의 마법에 난 깨어나
+                <br>Like Swan Swan Swan (MAMA)
+                <br>우아하게
+                <br>꿈을 꿔 Baby
+            </div>
+        </div>
+    </div>
+</body>
+<script src="spotify.js"></script>
+<script src="fitty.min.js"></script>
+<script>
+    fitty('#title', {
+  minSize: 16,
+  maxSize: 23
+});
+</script>
+</html>

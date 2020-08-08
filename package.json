@@ -1,0 +1,41 @@
+{
+  "name": "lyricsplayer",
+  "version": "0.1.0-alpha.1",
+  "description": "Displays Lyrics of currently playing song in spotify",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
+  },
+  "author": "Nicholas Chai",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^9.0.5",
+    "electron-builder": "^22.8.0"
+  },
+  "dependencies": {
+    "event-source-polyfill": "^1.0.15",
+    "node-fetch": "^2.6.0"
+  },
+  "build": {
+    "appId": "com.lyricsplayer.app",
+    "productName": "LyricsPlayer",
+    "compression": "normal",
+    "asar": true,
+    "extends": null,
+    "win": {
+      "target": "portable",
+      "icon": "./build/favicon.ico"
+    },
+    "files": [
+      "main.js",
+      "build/**/*",
+      "client/**/*",
+      "node_modules/**/*"
+    ],
+    "directories": {
+      "buildResources": "build"
+    }
+  }
+}
