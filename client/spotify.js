@@ -1,7 +1,5 @@
 const path = require('path');
-const fetch = require('node-fetch');
 const {ipcRenderer} = require('electron');
-const {EventSourcePolyfill} = require('event-source-polyfill');
 
 //elements
 const menu_btn = document.querySelector('#menu-btn');
@@ -29,68 +27,105 @@ const lyrics = document.querySelector('#lyrics');
 const lyrics_card = document.querySelector('.lyrics-card');
 const lyrics_pull_down = document.querySelector('#lyrics-pull-down');
 
-// Server sent events
-// const BASE_URL= "http://localhost:8888"
-const BASE_URL= "https://lyricsplayer.herokuapp.com"
+// Websockets
+const DOMAIN= "lyricsplayer.herokuapp.com"
+// const DOMAIN= "localhost:8888"
+let ws = new WebSocket('ws://'+ DOMAIN);
 
 let currentSongDetails = {is_playing: false};
 let song_progress;
+let user_id;
+let button_update = true;
 
 ipcRenderer.send('id', {});
 ipcRenderer.on('id', (e,msg)=>{
-    let user_id = msg;
-    header = {headers: { user_id:user_id }}
-    const evtSource = new EventSourcePolyfill(BASE_URL+'/spotify/stream',header);
+    user_id = msg;
+
+    ws.onopen = () => {
+        ws.send(JSON.stringify({user_id:user_id,action:"user_id"}));
+    };
     
-    evtSource.addEventListener('message', (message) => {
-        let data = JSON.parse(message.data);
+    ws.onmessage = (event) => {
+        let data = JSON.parse(event.data);
         let position = updatePlayer(data);
         //common updates
         filled_bar.style.width = `${position}px`;
         scrubber.style.left = `${position-(scrubber.offsetWidth/2)}px`;
-        if (currentSongDetails.is_playing) {
+        if (button_update && currentSongDetails.is_playing) {
+            // console.log("played");
             pause_btn.src = path.join(__dirname, '/assets/Pause Button.svg');
-        } else {
+        } else if (button_update && !currentSongDetails.is_playing) {
+            // console.log("paused");
             pause_btn.src = path.join(__dirname, '/assets/Play Button.svg');
         }
-    });
+    };
+
+    ws.onclose = (e) => {
+        console.log('socket closed');
+    };
+    ws.onerror = (e) => {
+        console.log('Websocket error: '+e);
+    };
 });
 
 function updatePlayer(data) {
-    if ("update" in data) {
-        let update = data.update;
-        song_progress = (Number(update.progress_ms)/Number(currentSongDetails.duration_ms));
-        currentSongDetails.is_playing = update.is_playing;
-        return song_progress*empty_bar.offsetWidth;
-    } else if ("lyrics" in data) {
-        lyrics.innerText = data.lyrics
-    } else if ("song" in data){
-        let song = data.song;
-        currentSongDetails = song;
-        title.textContent = song.title;
-        artist.textContent = song.artist;   
-        cover.src = song.image;
-        let position = (Number(song.progress_ms)/Number(song.duration_ms))*empty_bar.offsetWidth;
-        return position;
-    } else if ("picture" in data) {
-        profile_picture.src = data.picture;
-    }
+    switch (Object.keys(data)[0]) {
+        case "picture":
+            profile_picture.src = data.picture;
+            break;
+        case "song":
+            let song = data.song;
+            currentSongDetails = song;
+            title.textContent = song.title;
+            artist.textContent = song.artist;   
+            cover.src = song.image;
+            let position = (Number(song.progress_ms)/Number(song.duration_ms))*empty_bar.offsetWidth;
+            return position;
+            break;
+        case "lyrics":
+            lyrics.innerText = data.lyrics;
+            break;
+        case "update":
+            let update = data.update;
+            // console.log(Number(update.progress_ms)-Number(currentSongDetails.progress_ms));
+            song_progress = (Number(update.progress_ms)/Number(currentSongDetails.duration_ms));
+            currentSongDetails.is_playing = update.is_playing;
+            currentSongDetails.progress_ms = update.progress_ms;
+            return song_progress*empty_bar.offsetWidth;
+            break;
+        default:
+            console.log("invalid data");
+            break;
+    } 
 }
 
+async function forceButtonPress(callback=()=>{}) {
+    button_update=false;
+    let loop = setInterval(callback,10);
+    await new Promise(r=>setTimeout(r,700))
+    clearInterval(loop);
+    button_update=true;
+}
 
 //click events
 pause_btn.addEventListener('click', () => {
     if (path.basename(pause_btn.src, '.svg').toLowerCase().includes('pause')) {
-        fetch(BASE_URL+'/spotify/pause',header);
-        pause_btn.src = path.join(__dirname, '/assets/Play Button.svg');
+        ws.send(JSON.stringify({user_id:user_id,action:"pause"}));
+        forceButtonPress(() => {
+            pause_btn.src = path.join(__dirname, '/assets/Play Button.svg');
+            // console.log("working");
+        });
     } else {
-        fetch(BASE_URL+'/spotify/play',header);
-        pause_btn.src = path.join(__dirname, '/assets/Pause Button.svg');
+        ws.send(JSON.stringify({user_id:user_id,action:"play"}));
+        forceButtonPress(() => {
+            pause_btn.src = path.join(__dirname, '/assets/Pause Button.svg');
+            // console.log("working");
+        });
     }
 });
 
-next_btn.addEventListener('click', () => fetch(BASE_URL+'/spotify/next',header));
-prev_btn.addEventListener('click', () => fetch(BASE_URL+'/spotify/previous',header));
+next_btn.addEventListener('click', () => ws.send(JSON.stringify({user_id:user_id,action:"next"})));
+prev_btn.addEventListener('click', () => ws.send(JSON.stringify({user_id:user_id,action:"prev"})));
 trans_btn.addEventListener('click', () => {
     trans_card.style.display = 'flex';
     animate(0,(progress) => {move(trans_card,trans_card_prop,progress);},300);
