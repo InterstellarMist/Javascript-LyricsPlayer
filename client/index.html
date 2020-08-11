@@ -8,25 +8,37 @@
     <link rel="stylesheet" href="index-style.css">
 </head>
 <body>
-    <h1>LyricsPlayer</h1>
-    <p id="subtext">Powered by</p>
-    <img id="spotify-logo" src="assets/spotify_logo.svg" alt="spotify-logo">
-    <img id="illustration" src="assets/undraw_music_r1se 1.svg" alt="illustration">
-    <div id="action-text">start listening now</div>
-    <div id="action-button">
-        <div id="action-label">Get Started</div>
+    <div class="main-screen">
+        <h1>LyricsPlayer</h1>
+        <p id="subtext">Powered by</p>
+        <img id="spotify-logo" src="assets/spotify_logo.svg" alt="spotify-logo">
+        <img id="illustration" src="assets/undraw_music_r1se 1.svg" alt="illustration">
+        <div id="action-text">start listening now</div>
+        <div id="action-button">
+            <div id="action-label">Get Started</div>
+        </div>
+    </div>
+    <div class="loading-screen">
+        <div class="pop-up-card">    
+            <div class="loading-animation">
+                <div class="c"></div>
+                <div class="c"></div>
+                <div class="c"></div>
+                <div class="c"></div>
+            </div>
+        </div>
     </div>
 </body>
 <script>
     const electron = require('electron');
     const {ipcRenderer} = electron; 
-    const button = document.getElementById('action-button'); 
-    
     const action_button = document.querySelector('#action-button');
 
     if (navigator.onLine) {
-        button.addEventListener('click',() => {
-            ipcRenderer.send('login', {})
+        document.getElementById('action-button').addEventListener('click',() => {
+            document.querySelector('.loading-screen').style.display = "flex";
+            document.querySelector('.main-screen').style.filter = "blur(2px)";
+            ipcRenderer.send('login', {});
         });
     } else {
         window.alert("No Internet Connection");

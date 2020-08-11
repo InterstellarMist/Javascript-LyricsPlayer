@@ -2,8 +2,8 @@ const { app, BrowserWindow, ipcMain } = require('electron')
 const path = require('path');
 const URL = require('url');
 
-const BASE_URL= "https://lyricsplayer.herokuapp.com"
-// const BASE_URL= "http://localhost:8888"
+// const BASE_URL= "https://lyricsplayer.herokuapp.com"
+const BASE_URL= "http://localhost:8888"
 
 let mainWindow;
 let win;

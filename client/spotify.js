@@ -27,15 +27,28 @@ const lyrics = document.querySelector('#lyrics');
 const lyrics_card = document.querySelector('.lyrics-card');
 const lyrics_pull_down = document.querySelector('#lyrics-pull-down');
 
+const lang_btn = document.querySelectorAll('.language-btn');
+const not_available = document.querySelector('#not-available');
+const french = document.querySelector('#french');
+const korean = document.querySelector('#korean');
+const english = document.querySelector('#english');
+const chinese = document.querySelector('#chinese');
+const japanese = document.querySelector('#japanese');
+const original = document.querySelector('#original');
+const romanized = document.querySelector('#romanized');
+const loading_animation = document.querySelector('.loading-animation');
+
 // Websockets
-const DOMAIN= "lyricsplayer.herokuapp.com"
-// const DOMAIN= "localhost:8888"
+// const DOMAIN= "lyricsplayer.herokuapp.com"
+const DOMAIN= "localhost:8888"
 let ws = new WebSocket('ws://'+ DOMAIN);
 
 let currentSongDetails = {is_playing: false};
 let song_progress;
 let user_id;
+let lyricPayload;
 let button_update = true;
+let lyrics_card_type = null;
 
 ipcRenderer.send('id', {});
 ipcRenderer.on('id', (e,msg)=>{
@@ -79,11 +92,15 @@ function updatePlayer(data) {
             title.textContent = song.title;
             artist.textContent = song.artist;   
             cover.src = song.image;
+            loading_animation.style.display = "flex";
+            lang_btn.forEach(element => element.style.display = "none");
             let position = (Number(song.progress_ms)/Number(song.duration_ms))*empty_bar.offsetWidth;
             return position;
             break;
         case "lyrics":
-            lyrics.innerText = data.lyrics;
+            lyricPayload = data.lyrics; 
+            updateLyrics(lyricPayload);
+            console.log(lyricPayload);
             break;
         case "update":
             let update = data.update;
@@ -107,6 +124,43 @@ async function forceButtonPress(callback=()=>{}) {
     button_update=true;
 }
 
+function updateLyrics(lyricPayload) {
+    loading_animation.style.display = "none";
+    for (let language of Object.keys(lyricPayload)) {
+        switch (language) {
+            case "english":
+                english.style.display = "flex";
+                break;
+            case "romanized":
+                romanized.style.display = "flex";
+                break;
+            case "japanese":
+                japanese.style.display = "flex";
+                break;
+            case "chinese":
+                chinese.style.display = "flex";
+                break;
+            case "korean":
+                korean.style.display = "flex";
+                break;
+            case "french":
+                french.style.display = "flex";
+                break;
+            case "original":
+                original.style.display = "flex";
+                break;
+            default:
+                not_available.style.display = "flex";
+                break;
+        }
+    }
+    if (lyrics_card_type) {
+        if (Object.keys(lyricPayload).includes(lyrics_card_type)) {
+            lyrics.innerText = lyricPayload[lyrics_card_type];
+        } else { lyrics.innerText = Object.values(lyricPayload)[0] }
+    }
+}
+
 //click events
 pause_btn.addEventListener('click', () => {
     if (path.basename(pause_btn.src, '.svg').toLowerCase().includes('pause')) {
@@ -128,25 +182,62 @@ next_btn.addEventListener('click', () => ws.send(JSON.stringify({user_id:user_id
 prev_btn.addEventListener('click', () => ws.send(JSON.stringify({user_id:user_id,action:"prev"})));
 trans_btn.addEventListener('click', () => {
     trans_card.style.display = 'flex';
-    animate(0,(progress) => {move(trans_card,trans_card_prop,progress);},300);
+    animate(0,(progress) => {move(trans_card,null,progress);},300);
+    document.addEventListener("click", clickOff);
 });
 trans_pull_down.addEventListener('click', () => {
-    reverse_animate(1,(progress) => {move(trans_card,trans_card_prop,progress);},600,() =>{
+    reverse_animate(1,(progress) => {move(trans_card,null,progress);},300,() =>{
         trans_card.style.display = 'none';
     })
 });
-document.querySelector('#korean').addEventListener('click', () => {
+korean.addEventListener('click', () => {
+    openLyricsCard();
+    lyrics.innerText = lyricPayload.korean;
+    lyrics_card_type = "korean";
+});
+english.addEventListener('click', () => {
+    lyrics.innerText = lyricPayload.english;
+    openLyricsCard();
+    lyrics_card_type = "english";
+});
+chinese.addEventListener('click', () => {
+    lyrics.innerText = lyricPayload.chinese;
+    openLyricsCard();
+    lyrics_card_type = "chinese";
+});
+japanese.addEventListener('click', () => {
+    lyrics.innerText = lyricPayload.japanese;
+    openLyricsCard();
+    lyrics_card_type = "japanese";
+});
+romanized.addEventListener('click', () => {
+    lyrics.innerText = lyricPayload.romanized;
+    openLyricsCard();
+    lyrics_card_type = "romanized";
+});
+original.addEventListener('click', () => {
+    lyrics.innerText = lyricPayload.original;
+    openLyricsCard();
+    lyrics_card_type = "original";
+});
+french.addEventListener('click', () => {
+    lyrics.innerText = lyricPayload.french;
+    openLyricsCard();
+    lyrics_card_type = "french";
+});
+
+function openLyricsCard() {
     lyrics_card.style.display = 'flex';
     animate(0,(progress) => {move(menu_btn,menu_btn_prop,progress);},300);
     animate(0,(progress) => {move(profile_picture,profile_picture_prop,progress)},300);
-    animate(0,moveAll,300, () => {
+    if (!lyrics_card_type) {animate(0,moveAll,300, () => {
         menu_btn.style.display = 'none';
         profile_picture.style.display = 'none';
-    });
-    reverse_animate(1,(progress) => {move(trans_card,trans_card_prop,progress)},600,() =>{
+    });};
+    reverse_animate(1,(progress) => {move(trans_card,null,progress)},300,() =>{
         trans_card.style.display = 'none';
     });
-});
+}
 
 //Scaling properties
 const vw = window.innerWidth;
@@ -182,21 +273,30 @@ const scrubber_prop = {
 };
 const menu_btn_prop = {opacity: [1,0]};
 const profile_picture_prop = {opacity: [1,0]};
-const trans_card_prop = {bottom: [(-0.5*vh),0]};
 //move function
 function move(el,property,progress) {
-    for (const [key,value] of Object.entries(property)) {
-        if (key == 'boxShadow') {
-            el.style[`${key}`] = (progress >= 0.5) ? value[1] : value[0];
-        } else if (key == 'opacity') {
-            el.style[`${key}`] = (value[0] + ((value[1]-value[0])*progress));
-        } else {
-            el.style[`${key}`] = `${(value[0] + ((value[1]-value[0])*progress))}px`;
-        }
-    }
-    if (el===filled_bar || el===scrubber){
-        filled_bar.style.width = `${song_progress*empty_bar.offsetWidth}px`;
-        scrubber.style.left = `${song_progress*empty_bar.offsetWidth-(scrubber.offsetWidth/2)}px`;
+    switch (el){
+        case trans_card:
+            el.style.bottom = `${-el.offsetHeight + el.offsetHeight*progress}px`;
+            break;
+        case filled_bar || scrubber:
+            filled_bar.style.width = `${song_progress*empty_bar.offsetWidth}px`;
+            scrubber.style.left = `${song_progress*empty_bar.offsetWidth-(scrubber.offsetWidth/2)}px`;
+        default:
+            for (const [key,value] of Object.entries(property)) {
+                switch (key) {
+                    case "boxShadow":
+                        el.style[`${key}`] = (progress >= 0.5) ? value[1] : value[0];
+                        break;
+                    case "opacity":
+                        el.style[`${key}`] = (value[0] + ((value[1]-value[0])*progress));
+                        break;
+                    default:
+                        el.style[`${key}`] = `${(value[0] + ((value[1]-value[0])*progress))}px`;
+                        break;
+                }
+            }
+            break;
     }
 }
 
@@ -266,6 +366,7 @@ document.addEventListener('mouseup', (e) => {
         reverse_animate(1,(progress) => {move(profile_picture,profile_picture_prop,progress)},300);
         reverse_animate(percent,moveAll,300, () => {
             lyrics_card.style.display = 'none';
+            lyrics_card_type = null;
         });
     
     }
@@ -283,3 +384,21 @@ document.addEventListener('mousemove', (e) => {
         }
     }
 });
+
+//clicked outside a div
+function clickOff(evt) {
+    let targetElement = evt.target;
+
+    do {
+        if (targetElement == trans_card || targetElement == trans_btn) {
+            return;
+        }
+        targetElement = targetElement.parentNode;
+    } while (targetElement);
+
+    console.log("clicked");
+    reverse_animate(1,(progress) => {move(trans_card,null,progress);},300,() =>{
+        trans_card.style.display = 'none';
+    })
+    document.removeEventListener("click", clickOff);
+}

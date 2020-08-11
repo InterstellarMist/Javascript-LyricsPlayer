@@ -244,7 +244,6 @@ body{
     border-radius: 17px;
     border: 2px solid #292F33;
     
-    display: flex;
     align-items: center;
     justify-content: space-between;
     font-family: Gotham;
@@ -264,11 +263,8 @@ body{
     font-weight: 400;
     color: #a8b6b7;
     display: none;
+    border:none;
     justify-content: center;
-}
-
-#korean {
-    display: flex;
 }
 
 .lyrics-card {
@@ -340,4 +336,71 @@ body{
     background-color: #3f494f;
     border-radius: 10px;
     /* box-shadow: -5px -5px 10px rgba(255, 255, 255, 0.04), 5px 5px 10px rgba(0, 0, 0, 0.5); */
+}
+
+/* LOADING SCREEN */
+.loading-animation {
+    background: #22282E;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+
+    height: 50px;
+    width: 300px;
+    overflow: hidden;
+    position: relative;
+}
+
+.c {
+    display: inline-block;
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    left:-10px;
+    background-color: #EA4C88;
+    border-radius: 50%;
+    animation: move 3s linear infinite, mint 1.5s linear infinite alternate;
+    
+}
+
+@keyframes move {
+    0%{
+        transform: translateX(-10px);
+    }
+    10%{
+        transform: translateX(120px);
+    }
+    50%{
+        transform: translateX(150px);
+    }
+    70%{
+        transform: translateX(170px);
+    }
+    80%,100%{
+        transform: translateX(315px);
+    }
+}
+@keyframes mint {
+    0%{
+        height: 10px;
+        width: 10px;
+    }
+    100%{
+        height: 30px;
+        width: 30px;
+    }
+}
+
+.c:nth-child(0) {
+    animation-delay: 0s,0s;
+}
+.c:nth-child(1) {
+    animation-delay: 0.2s,0.2s;
+}
+.c:nth-child(2) {
+    animation-delay: 0.4s,0.4s;
+}
+.c:nth-child(3) {
+    animation-delay: 0.5s,0.5s;
 }
