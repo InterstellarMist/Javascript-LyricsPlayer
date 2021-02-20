@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain } = require('electron')
+const { app, BrowserWindow, ipcMain, nativeImage } = require('electron')
 const path = require('path');
 const URL = require('url');
 
@@ -19,7 +19,7 @@ function createWindow () {
         autoHideMenuBar: true,
         useContentSize: true,
         alwaysOnTop: true,
-        icon: path.join(__dirname,"./build/favicon.ico"),
+        icon: nativeImage.createFromPath(path.join(__dirname,"./build/favicon.ico")),
         webPreferences: { nodeIntegration: true }
     })
     
@@ -30,7 +30,7 @@ function createWindow () {
     
     mainWindow.on('closed', () => app.quit());
 }
-app.whenReady().then(createWindow);
+app.whenReady().then(createWindow).catch((err) => console.log(err));
 
 
 //create Login window and send tokens
@@ -42,7 +42,7 @@ function createLoginWindow(url) {
         width:550,
         height:550,
         title: 'Login with Spotify',
-        icon: path.join(__dirname,"./build/favicon.ico"),
+        icon: nativeImage.createFromPath(path.join(__dirname,"./build/favicon.ico")),
         webPreferences: { nodeIntegration:true }
     });
     // win.webContents.session.clearStorageData(() => console.log('cache cleared.'));
@@ -59,7 +59,7 @@ function createLoginWindow(url) {
                 let url = URL.format({
                     protocol: 'file',
                     slashes: true,
-                    pathname: require('path').join(__dirname, 'client','player.html')
+                    pathname: path.join(__dirname, 'client','player.html')
                 });
                 mainWindow.loadURL(url);
                 ipcMain.on('id', (e,msg)=>{
@@ -67,7 +67,7 @@ function createLoginWindow(url) {
                 });
                 win.close();
                 } else {
-                    win.show();
+                    win.show();>
                     console.log('Not yet logged in');
                 }
             }
