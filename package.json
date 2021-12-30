@@ -1,6 +1,6 @@
 {
   "name": "lyricsplayer",
-  "version": "0.1.0-alpha.1",
+  "version": "0.1.0-alpha.3.1",
   "description": "Displays Lyrics of currently playing song in spotify",
   "main": "main.js",
   "scripts": {
