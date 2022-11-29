@@ -1,37 +1,32 @@
 {
-  "name": "lyricsplayer",
-  "version": "0.1.0-alpha.3.1",
-  "description": "Displays Lyrics of currently playing song in spotify",
-  "main": "main.js",
+  "name": "Javascript-LyricsPlayer",
+  "version": "0.2.0-alpha.0.1",
+  "description": "Displays lyrics of currently playing song in spotify",
+  "license": "MIT",
+  "author": "Nicholas Chai",
+  "packageManager": "yarn@3.3.0",
+  "main": "./main.js",
   "scripts": {
-    "start": "electron .",
+    "start": "electronmon .",
     "pack": "electron-builder --dir",
     "dist": "electron-builder"
   },
-  "author": "Nicholas Chai",
-  "license": "MIT",
   "devDependencies": {
-    "electron": "^9.0.5",
-    "electron-builder": "^22.8.0"
+    "electron": "^21.3.1",
+    "electron-builder": "^23.6.0",
+    "electronmon": "^2.0.2"
   },
   "build": {
     "appId": "com.lyricsplayer.app",
     "productName": "LyricsPlayer",
-    "compression": "normal",
-    "asar": true,
-    "extends": null,
     "win": {
       "target": "portable",
-      "icon": "./build/favicon.ico"
+      "icon": "./build/icons/512x512.png"
     },
-    "files": [
-      "main.js",
-      "build/**/*",
-      "client/**/*",
-      "node_modules/**/*"
-    ],
-    "directories": {
-      "buildResources": "build"
+    "linux": {
+      "target": "AppImage",
+      "category": "media",
+      "icon": "./build/icons/512x512.png"
     }
   }
 }

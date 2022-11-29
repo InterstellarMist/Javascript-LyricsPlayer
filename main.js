@@ -1,6 +1,5 @@
 const { app, BrowserWindow, ipcMain, nativeImage } = require("electron");
 const path = require("path");
-const URL = require("url");
 
 // const BASE_URL= "https://lyricsplayer.herokuapp.com"
 const BASE_URL = "http://localhost:8888";
@@ -20,15 +19,19 @@ function createWindow() {
     useContentSize: true,
     alwaysOnTop: true,
     icon: nativeImage.createFromPath(
-      path.join(__dirname, "./build/favicon.ico")
+      path.join(__dirname, "./build/icons/512x512.png")
     ),
-    webPreferences: { nodeIntegration: true },
+    webPreferences: {
+      preload: path.join(__dirname, "./preload.js"),
+    },
   });
 
   mainWindow.once("ready-to-show", () => mainWindow.show());
 
   // and load the index.html of the app.
   mainWindow.loadFile("client/index.html");
+
+  // mainWindow.webContents.openDevTools();
 
   mainWindow.on("closed", () => app.quit());
 }
@@ -44,53 +47,43 @@ function createLoginWindow(url) {
     show: false,
     modal: true,
     width: 550,
-    height: 550,
+    height: 920,
     title: "Login with Spotify",
     icon: nativeImage.createFromPath(
-      path.join(__dirname, "./build/favicon.ico")
+      path.join(__dirname, "./build/icons/512x512.png")
     ),
-    webPreferences: { nodeIntegration: true },
   });
-  // win.webContents.session.clearStorageData(() => console.log('cache cleared.'));
   win.loadURL(url);
+  // win.webContents.session.clearStorageData(() => console.log("cache cleared."));
 
   win.webContents.on("did-finish-load", () => {
-    win.webContents.findInPage("Connection Success", [
-      (matchCase = true),
-      (wordStart = true),
-    ]);
-    win.webContents.on("found-in-page", (e, result) => {
-      if (win) {
-        if (result.matches > 0) {
-          win.webContents.stopFindInPage("clearSelection");
-          let req = URL.parse(win.webContents.getURL(), true);
-          let user_id = req.query.user_id;
-          console.log(user_id);
-          let url = URL.format({
-            protocol: "file",
-            slashes: true,
-            pathname: path.join(__dirname, "client", "player.html"),
-          });
-          mainWindow.loadURL(url);
-          ipcMain.on("id", (e, msg) => {
-            e.reply("id", user_id);
-          });
-          win.close();
-        } else {
-          win.show();
-          console.log("Not yet logged in");
-        }
-      }
-    });
+    let carrier_url = win.webContents.getURL();
+    if (carrier_url.split("?")[0] == "http://localhost:8888/auth") {
+      // Obtain the access token from LyricsPlayer API
+      let local_token = new URLSearchParams(carrier_url.split("?")[1]).get(
+        "local_token"
+      );
+      console.log(local_token);
+      win.close();
+
+      ipcMain.handle("auth", async () => {
+        return local_token;
+      });
+
+      // Redirect to player page
+      mainWindow.loadFile("client/player.html");
+    }
   });
 
-  // win.once('ready-to-show', () => win.show());
+  win.once("ready-to-show", () => win.show());
+
   win.on("closed", () => (win = null));
 }
 
 //events
 ipcMain.on("login", (e, item) => {
   createLoginWindow(BASE_URL + "/spotify/login");
+  console.log("logging in...");
 });
 
 //Quit

@@ -145,6 +145,7 @@ body {
   font-weight: 400;
   font-size: 14px;
   color: #d5e5e6;
+  margin-top: 5px;
 }
 
 #pause-btn {
@@ -338,6 +339,11 @@ body {
 
   overflow-y: auto;
   overflow-x: hidden;
+}
+
+#lyrics > a {
+  text-decoration: none;
+  color: white;
 }
 
 #lyrics::-webkit-scrollbar {
