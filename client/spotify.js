@@ -45,6 +45,7 @@ let lyrics_card_type = null;
 // Websockets
 // const DOMAIN= "lyricsplayer.herokuapp.com"
 const DOMAIN = "localhost:8888";
+// const DOMAIN = "192.168.68.119:8888";
 let ws = new WebSocket("ws://" + DOMAIN);
 
 // Obtain access token

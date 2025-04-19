@@ -2,7 +2,9 @@ const { app, BrowserWindow, ipcMain, nativeImage } = require("electron");
 const path = require("path");
 
 // const BASE_URL= "https://lyricsplayer.herokuapp.com"
-const BASE_URL = "http://localhost:8888";
+// const BASE_URL = "http://localhost:8888";
+const BASE_URL = "http://127.0.0.1:8888";
+// const BASE_URL = "http://192.168.68.119:8888";
 
 let mainWindow;
 let win;
@@ -46,6 +48,7 @@ function createLoginWindow(url) {
     parent: mainWindow,
     show: false,
     modal: true,
+    autoHideMenuBar: true,
     width: 550,
     height: 920,
     title: "Login with Spotify",
@@ -58,7 +61,8 @@ function createLoginWindow(url) {
 
   win.webContents.on("did-finish-load", () => {
     let carrier_url = win.webContents.getURL();
-    if (carrier_url.split("?")[0] == "http://localhost:8888/auth") {
+    console.log(carrier_url);
+    if (carrier_url.split("?")[0] == BASE_URL + "/auth") {
       // Obtain the access token from LyricsPlayer API
       let local_token = new URLSearchParams(carrier_url.split("?")[1]).get(
         "local_token"
