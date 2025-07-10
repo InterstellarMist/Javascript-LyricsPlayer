@@ -118,7 +118,7 @@ function updatePlayer(data) {
   }
 }
 
-async function forceButtonPress(callback = () => {}) {
+async function forceButtonPress(callback = () => { }) {
   button_update = false;
   let loop = setInterval(callback, 10);
   await new Promise((r) => setTimeout(r, 700));
@@ -324,9 +324,8 @@ function move(el, property, progress) {
       break;
     case filled_bar || scrubber:
       filled_bar.style.width = `${song_progress * empty_bar.offsetWidth}px`;
-      scrubber.style.left = `${
-        song_progress * empty_bar.offsetWidth - scrubber.offsetWidth / 2
-      }px`;
+      scrubber.style.left = `${song_progress * empty_bar.offsetWidth - scrubber.offsetWidth / 2
+        }px`;
     default:
       for (const [key, value] of Object.entries(property)) {
         switch (key) {
@@ -337,9 +336,8 @@ function move(el, property, progress) {
             el.style[`${key}`] = value[0] + (value[1] - value[0]) * progress;
             break;
           default:
-            el.style[`${key}`] = `${
-              value[0] + (value[1] - value[0]) * progress
-            }px`;
+            el.style[`${key}`] = `${value[0] + (value[1] - value[0]) * progress
+              }px`;
             break;
         }
       }
@@ -358,7 +356,7 @@ function moveAll(progress) {
   move(scrubber, scrubber_prop, progress);
 }
 
-function reverse_animate(init_percent, move_func, time, callback = () => {}) {
+function reverse_animate(init_percent, move_func, time, callback = () => { }) {
   init_percent = init_percent.toFixed(2);
   let steps = time / 10;
   let i = 1;
@@ -376,7 +374,7 @@ function reverse_animate(init_percent, move_func, time, callback = () => {}) {
     }
   }, 10);
 }
-function animate(init_percent, move_func, time, callback = () => {}) {
+function animate(init_percent, move_func, time, callback = () => { }) {
   init_percent = init_percent.toFixed(2);
   let steps = time / 10;
   let i = 0;
