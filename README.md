@@ -1,5 +1,11 @@
 
+
 # LyricsPlayer
+
+<p align="center" style="display: flex; gap: 16px; justify-content: center;">
+  <img src="images/lyricsplayer-main.png" alt="LyricsPlayer Main UI" width="300" style="display: inline-block; vertical-align: top; margin-right: 8px;" />
+  <img src="images/lyricsplayer-lyrics.png" alt="LyricsPlayer Lyrics View" width="300" style="display: inline-block; vertical-align: top;" />
+</p>
 
 LyricsPlayer is a desktop application built with Electron that displays the lyrics of the currently playing song on Spotify. It features real-time lyric fetching and a modern, user-friendly interface.
 
